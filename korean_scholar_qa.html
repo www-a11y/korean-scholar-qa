@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>韓国の学者に質問しよう</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+      background-image: url('67392.jpg');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      text-shadow: 1px 1px 2px black;
+    }
+    img {
+      width: 200px;
+      border-radius: 16px;
+      border: 2px solid white;
+    }
+    .bubble {
+      background: rgba(0, 0, 0, 0.6);
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 20px;
+      margin-top: 10px;
+    }
+    button, input[type="text"] {
+      padding: 10px 20px;
+      font-size: 18px;
+      margin: 5px;
+      cursor: pointer;
+    }
+    input[type="text"] {
+      width: 60%;
+    }
+  </style>
+</head>
+<body>
+  <h2>🎤⌨️ 韓国の学者に質問してみよう</h2>
+  <img src="67392.jpg" alt="韓国の学者">
+  <br><br>
+  <button onclick="startRecognition()">🎤 話しかける</button>
+  <br><br>
+  <input type="text" id="textInput" placeholder="キーボードでも質問できます">
+  <button onclick="handleTextInput()">送信</button>
+
+  <p><strong>あなた：</strong><span id="userText" class="bubble">---</span></p>
+  <p><strong>学者：</strong><span id="replyText" class="bubble">---</span></p>
+
+  <script>
+    const qaMap = {
+      "儒教の特徴": "科挙（儒教の試験）で合格すれば出世し、身内を繫栄させられたよ",
+      "韓国人はどうなった": "周りより前に出て、自己主張しないと潰されるようになった",
+      "上下関係": "公（社会）よりも私（一族）を重視するものだったよ"
+    };
+
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = "ja-JP";
+
+    function startRecognition() {
+      recognition.start();
+      recognition.onresult = function(event) {
+        const userInput = event.results[0][0].transcript.trim();
+        processInput(userInput);
+      };
+    }
+
+    function handleTextInput() {
+      const userInput = document.getElementById("textInput").value.trim();
+      if (userInput !== "") {
+        processInput(userInput);
+        document.getElementById("textInput").value = "";
+      }
+    }
+
+    function processInput(userInput) {
+      document.getElementById("userText").textContent = userInput;
+
+      let reply = "申し訳ありません、それには答えられません。";
+      for (const key in qaMap) {
+        if (userInput.includes(key)) {
+          reply = qaMap[key];
+          break;
+        }
+      }
+
+      document.getElementById("replyText").textContent = reply;
+      speak(reply);
+    }
+
+    function speak(text) {
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = "ja-JP";
+      speechSynthesis.speak(utter);
+    }
+  </script>
+</body>
+</html>
